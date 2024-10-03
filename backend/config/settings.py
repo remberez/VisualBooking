@@ -163,6 +163,7 @@ SPECTACULAR_SETTINGS = {
     },
 
     'COMPONENT_SPLIT_REQUEST': True,
+
     'SORT_OPERATIONS': False,
 
     'ENABLE_DJANGO_DEPLOY_CHECK': False,
@@ -177,3 +178,5 @@ INTERNAL_IPS = [
 AUTH_USER_MODEL = 'users.User'
 MEDIA_ROOT = 'media'
 MEDIA_URL = 'media/'
+
+CORS_ALLOW_ALL_ORIGINS = True
