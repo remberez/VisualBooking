@@ -9,7 +9,7 @@ def object_directory_path(instance, filename):
 
 
 class ObjectImage(models.Model):
-    image = models.ImageField(
+    media = models.ImageField(
         verbose_name='Изображение', upload_to=object_directory_path,
     )
     object = models.ForeignKey(
@@ -26,7 +26,7 @@ class ObjectImage(models.Model):
 
 
 class ObjectVideo(models.Model):
-    video_url = models.URLField(
+    media = models.URLField(
         verbose_name='Ссылка на видео',
     )
     object = models.ForeignKey(
