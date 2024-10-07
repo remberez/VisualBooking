@@ -1,12 +1,8 @@
 from django.contrib import admin
-from booking.models.address import Address
-from booking.models.object import Object
+from booking.models.address import Address, ExactAddress, City
+from booking.models.object import Object, IndependentObject, Room, TypeOfObject
 from booking.models.media import ObjectImage, ObjectVideo
-
-
-@admin.register(Object)
-class ObjectAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'owner', 'is_active')
+from booking.models.price_list import IndependentPriceList, PriceListOfRoom
 
 
 @admin.register(Address)
@@ -14,11 +10,55 @@ class AddressAdmin(admin.ModelAdmin):
     list_display = ('id', 'city', 'street', 'house')
 
 
-@admin.register(ObjectImage)
-class ObjectImageAdmin(admin.ModelAdmin):
-    list_display = ('id', 'object', 'image')
+class ObjectImageAdmin(admin.TabularInline):
+    model = ObjectImage
+    extra = 0
 
 
-@admin.register(ObjectVideo)
-class ObjectVideoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'object', 'video_url')
+class ObjectVideoAdmin(admin.TabularInline):
+    model = ObjectVideo
+    extra = 0
+
+
+@admin.register(Object)
+class ObjectAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'owner', 'is_active')
+    inlines = (
+        ObjectImageAdmin,
+        ObjectVideoAdmin,
+    )
+
+
+@admin.register(IndependentPriceList)
+class IndependentPriceListAdmin(admin.ModelAdmin):
+    list_display = ('id', 'object', 'first_day', 'last_day')
+
+
+@admin.register(ExactAddress)
+class ExactAddressAdmin(admin.ModelAdmin):
+    list_display = ('entrance', 'apartment', 'floor')
+
+
+@admin.register(IndependentObject)
+class IndependentObjectAdmin(admin.ModelAdmin):
+    list_display = ('id', 'base_object', 'created_at', 'updated_at')
+
+
+@admin.register(Room)
+class RoomObject(admin.ModelAdmin):
+    list_display = ('id', 'base_object', 'created_at', 'updated_at')
+
+
+@admin.register(TypeOfObject)
+class TypeOfObjectAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'is_independent')
+
+
+@admin.register(PriceListOfRoom)
+class PriceListOfRoomAdmin(admin.ModelAdmin):
+    list_display = ('id', 'object', 'first_day', 'last_day')
+
+
+@admin.register(City)
+class CityAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')

@@ -21,3 +21,8 @@ class IsOwnerPosition(BasePermission):
         if request.user.is_authenticated:
             return request.user.position == base_position.OWNER_POSITION
         return False
+
+
+class IsOwnerOfObject(IsOwnerPosition):
+    def has_object_permission(self, request, view, obj):
+        return request.user == obj.owner
