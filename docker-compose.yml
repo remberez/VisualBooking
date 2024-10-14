@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  django:
+    build: backend/.
+    container_name: django
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - 8000:8000
+    depends_on:
+      - pgdb
+    environment:
+      - DJANGO_SUPERUSER_PASSWORD=123
+
+  pgdb:
+    image: postgres
+    environment:
+      - POSTGRES_DB=VisualBooking
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    container_name: pgdb
+    volumes:
+      - pgdbdata:/var/lib/postgresql/data/
+
+volumes:
+  pgdbdata: null
