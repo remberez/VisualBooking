@@ -83,6 +83,7 @@ DATABASES = {
         'NAME': env.str('PG_DATABASE', default='postgres'),
         'USER': env.str('PG_USER', default='postgres'),
         'PASSWORD': env.str('PG_PASSWORD', default='postgres'),
+        'HOST': 'pgdb',
         'POST': env.int('DB_PORT', default=5432),
     }
 }

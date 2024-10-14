@@ -55,12 +55,6 @@ class City(models.Model):
     name = models.CharField(
         verbose_name='Название города', max_length=35,
     )
-    sea_latitude = models.DecimalField(
-        verbose_name='Широта пляжа', max_digits=8, decimal_places=6
-    )
-    sea_longitude = models.DecimalField(
-        verbose_name='Долгота пляжа', max_digits=8, decimal_places=6
-    )
 
     class Meta:
         verbose_name = 'Город'
