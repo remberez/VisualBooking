@@ -5,6 +5,16 @@ from booking.models.media import ObjectImage, ObjectVideo
 from booking.models.price_list import IndependentPriceList, PriceListOfRoom
 
 
+class IndependentObjectInline(admin.TabularInline):
+    model = IndependentObject
+    extra = 0
+
+
+class RoomsInline(admin.TabularInline):
+    model = Room
+    extra = 0
+
+
 @admin.register(Address)
 class AddressAdmin(admin.ModelAdmin):
     list_display = ('id', 'city', 'street', 'house')
@@ -26,6 +36,8 @@ class ObjectAdmin(admin.ModelAdmin):
     inlines = (
         ObjectImageAdmin,
         ObjectVideoAdmin,
+        IndependentObjectInline,
+        RoomsInline,
     )
 
 

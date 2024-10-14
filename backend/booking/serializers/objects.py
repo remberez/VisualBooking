@@ -1,9 +1,7 @@
-from django.db.models import Min
 from rest_framework import serializers
 from booking.models.object import Object, IndependentObject, Room
 from common.mixins.serializer_mixins import CommonMixin
 from booking.models.address import Address, ExactAddress
-from booking.models.price_list import IndependentPriceList
 from rest_framework import exceptions
 from booking.serializers.address import AddressCreateSerializer, ExactAddressCreateSerializer, \
     AddressObjectListSerializer
@@ -111,46 +109,17 @@ class ObjectCreateSerializer(ObjectValidate, serializers.ModelSerializer):
 
 class ObjectListSerializer(serializers.ModelSerializer):
     address = AddressObjectListSerializer()
-    currently_price = serializers.SerializerMethodField()
+    min_price = serializers.DecimalField(max_digits=8, decimal_places=2)
 
     class Meta:
         fields = (
+            'id',
             'name',
             'address',
-            'currently_price',
+            'min_price',
+            'type',
         )
         model = Object
 
-    def get_currently_price(self, obj) -> float:
-        # request = self.context.get('request')
-        # first_day = request.query_params.get('first_day')
-        # last_day = request.query_params.get('last_day')
-        #
-        # if first_day and last_day:
-        #     try:
-        #         min_price = IndependentPriceList.objects.filter(
-        #             object=obj,
-        #             first_day__gte=IndependentPriceList.objects.filter(
-        #                 object=obj,
-        #                 first_day__lte=first_day
-        #             ).order_by(
-        #                 '-first_day'
-        #             ).first().first_day,
-        #
-        #             last_day__lte=IndependentPriceList.objects.filter(
-        #                 object=obj,
-        #                 last_day__gte=last_day
-        #             ).order_by(
-        #                 'last_day'
-        #             ).first().last_day,
-        #         ).order_by('price').values('price').first()
-        #
-        #     except AttributeError:
-        #         raise exceptions.ParseError('Ошибка')
-        #     return min_price
-        # return IndependentPriceList.objects.filter(
-        #     object=obj
-        # ).aggregate(
-        #     min_price=Min('price')
-        # )['min_price']
-        return 1.0
+    def get_min_price(self, obj) -> float:
+        return obj.min_price

@@ -5,7 +5,7 @@ from . import base_position
 class IsAdmin(BasePermission):
     def has_permission(self, request, view):
         if request.user.is_authenticated:
-            return request.user.position == base_position.ADMIN_POSITION
+            return request.user.position.code == base_position.get_admin_position()
         return False
 
 
@@ -19,7 +19,7 @@ class IsOwnerOfAccount(BasePermission):
 class IsOwnerPosition(BasePermission):
     def has_permission(self, request, view):
         if request.user.is_authenticated:
-            return request.user.position == base_position.OWNER_POSITION
+            return request.user.position.code == base_position.get_owner_position()
         return False
 
 

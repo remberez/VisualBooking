@@ -1,8 +1,6 @@
-import pdb
-from datetime import datetime
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_spectacular.utils import extend_schema_view, extend_schema, OpenApiParameter
+from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -62,9 +60,9 @@ class ObjectView(CRUDViewSet):
     queryset = Object.objects.all()
 
     filter_backends = (
+        ObjectFilter,
         OrderingFilter,
         DjangoFilterBackend,
-        ObjectFilter,
     )
 
     filterset_class = ObjectFilterSet
