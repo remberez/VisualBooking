@@ -1,5 +1,10 @@
 from users.models.position import Position
 
-ADMIN_POSITION = Position.objects.filter(code='admin').first()
-USER_POSITION = Position.objects.filter(code='user').first()
-OWNER_POSITION = Position.objects.filter(code='owner').first()
+
+def get_admin_position(): return 'admin'
+
+
+def get_user_position(): return 'user'
+
+
+def get_owner_position(): return 'owner'
