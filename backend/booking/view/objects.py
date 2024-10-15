@@ -56,6 +56,8 @@ class ObjectView(CRUDViewSet):
         'add_images': (custom_permissions.IsOwnerOfObject,),
         'add_videos': (custom_permissions.IsOwnerOfObject,),
         'list': (AllowAny,),
+        'retrieve': (AllowAny,),
+        'delete': (custom_permissions.IsOwnerOfObject | custom_permissions.IsAdmin),
     }
     queryset = Object.objects.all()
 

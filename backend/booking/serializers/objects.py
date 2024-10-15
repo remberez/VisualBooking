@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+from booking.models.media import ObjectImage, ObjectVideo
 from booking.models.object import Object, IndependentObject, Room
 from common.mixins.serializer_mixins import CommonMixin
 from booking.models.address import Address, ExactAddress
@@ -107,9 +109,26 @@ class ObjectCreateSerializer(ObjectValidate, serializers.ModelSerializer):
         return object_instance
 
 
+class ImageObjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ObjectImage
+        fields = (
+            'media',
+        )
+
+
+class VideoObjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ObjectVideo
+        fields = (
+            'media',
+        )
+
+
 class ObjectListSerializer(serializers.ModelSerializer):
     address = AddressObjectListSerializer()
     min_price = serializers.DecimalField(max_digits=8, decimal_places=2)
+    images = ImageObjectSerializer(many=True)
 
     class Meta:
         fields = (
@@ -118,8 +137,6 @@ class ObjectListSerializer(serializers.ModelSerializer):
             'address',
             'min_price',
             'type',
+            'images',
         )
         model = Object
-
-    def get_min_price(self, obj) -> float:
-        return obj.min_price
