@@ -3,6 +3,7 @@ from booking.models.address import Address, ExactAddress, City
 from booking.models.object import Object, IndependentObject, Room, TypeOfObject
 from booking.models.media import ObjectImage, ObjectVideo
 from booking.models.price_list import IndependentPriceList, PriceListOfRoom
+from booking.models.tags import Tag
 
 
 class IndependentObjectInline(admin.TabularInline):
@@ -74,3 +75,8 @@ class PriceListOfRoomAdmin(admin.ModelAdmin):
 @admin.register(City)
 class CityAdmin(admin.ModelAdmin):
     list_display = ('id', 'name')
+
+
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title')

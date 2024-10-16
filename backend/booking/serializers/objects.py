@@ -1,5 +1,4 @@
 from rest_framework import serializers
-
 from booking.models.media import ObjectImage, ObjectVideo
 from booking.models.object import Object, IndependentObject, Room
 from common.mixins.serializer_mixins import CommonMixin
@@ -7,6 +6,7 @@ from booking.models.address import Address, ExactAddress
 from rest_framework import exceptions
 from booking.serializers.address import AddressCreateSerializer, ExactAddressCreateSerializer, \
     AddressObjectListSerializer
+from booking.serializers.tags import TagListSerializer
 
 
 class IndependentObjectCreateSerializer(serializers.ModelSerializer):
