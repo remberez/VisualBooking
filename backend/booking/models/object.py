@@ -84,6 +84,9 @@ class IndependentObject(BaseRoom):
         on_delete=models.SET_NULL, related_name='independent',
         null=True, blank=True
     )
+    tags = models.ManyToManyField(
+        'Tag', verbose_name='Теги', related_name='independent_objects',
+    )
 
     class Meta:
         verbose_name = 'Самостоятельный объект'
@@ -100,6 +103,9 @@ class Room(BaseRoom):
     )
     is_hidden = models.BooleanField(
         verbose_name='Номер скрыт', default=False,
+    )
+    tags = models.ManyToManyField(
+        'Tag', verbose_name='Теги', related_name='rooms',
     )
 
     class Meta:
