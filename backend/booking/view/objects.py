@@ -1,3 +1,4 @@
+from django.db import IntegrityError
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema_view, extend_schema
@@ -12,6 +13,7 @@ from common import permisions as custom_permissions
 from booking.models.object import Object
 from booking.serializers import media as media_serializers
 from booking.filter_backends.object_filters import ObjectFilterSet, ObjectFilter
+from rest_framework.permissions import IsAuthenticated
 
 
 @extend_schema_view(
@@ -42,6 +44,10 @@ from booking.filter_backends.object_filters import ObjectFilterSet, ObjectFilter
     add_videos_object=extend_schema(
         summary='Добавить ссылки на видео к объекту',
         tags=['Объекты'],
+    ),
+    add_to_favorites=extend_schema(
+        summary='Добавить объект в избранное',
+        tags=['Объекты', 'Пользователи']
     )
 )
 class ObjectView(CRUDViewSet):
@@ -53,11 +59,12 @@ class ObjectView(CRUDViewSet):
     }
     multi_permission_classes = {
         'create': (custom_permissions.IsOwnerPosition | custom_permissions.IsAdmin,),
-        'add_images': (custom_permissions.IsOwnerOfObject,),
-        'add_videos': (custom_permissions.IsOwnerOfObject,),
+        'add_images_object': (custom_permissions.IsOwnerOfObject,),
+        'add_videos_object': (custom_permissions.IsOwnerOfObject,),
         'list': (AllowAny,),
         'retrieve': (AllowAny,),
         'delete': (custom_permissions.IsOwnerOfObject | custom_permissions.IsAdmin),
+        'add_to_favorites': (IsAuthenticated,)
     }
     queryset = Object.objects.all()
 
@@ -90,3 +97,16 @@ class ObjectView(CRUDViewSet):
     )
     def add_videos_object(self, request, *args, **kwargs):
         return self.add_media(request, args, kwargs)
+
+    @action(
+        detail=True, methods=['get']
+    )
+    def add_to_favorites(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj is None:
+            return Response(status=status.HTTP_404_NOT_FOUND, data='Объект не найден')
+        try:
+            request.user.favorites_objects.add(obj)
+        except IntegrityError:
+            return Response(status=status.HTTP_208_ALREADY_REPORTED, data='Объект уже находится в избранном')
+        return Response(status=status.HTTP_201_CREATED)

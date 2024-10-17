@@ -46,3 +46,19 @@ class ObjectVideoSerializer(BaseMediaMixin, serializers.ModelSerializer):
             'media',
         )
         model = ObjectVideo
+
+
+class VideoObjectListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ObjectVideo
+        fields = (
+            'media',
+        )
+
+
+class ImageObjectListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ObjectImage
+        fields = (
+            'media',
+        )
