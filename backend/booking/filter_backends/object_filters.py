@@ -3,6 +3,7 @@ from rest_framework import filters
 import django_filters
 from booking.models.object import Object, Room
 from booking.models.price_list import PriceListOfRoom, IndependentPriceList
+from booking.models.tags import Tag
 from common import base_position
 
 
@@ -81,9 +82,27 @@ def define_date_filters(first_day, last_day):
     return rooms_filters, price_list_filters
 
 
+def annotate_tags(queryset):
+    qs = queryset.annotate(
+        tags=Case(
+            When(
+                independent__isnull=True,
+                then='rooms__tags__title',
+            ),
+            When(
+                independent__isnull=False,
+                then='independent__tags__title',
+            )
+        )
+    )
+    for i in qs:
+        print(i.tags)
+    return qs
+
+
 class ObjectFilter(filters.BaseFilterBackend):
 
-    def position_filter(self, request, queryset):
+    def position_filter(self, request, queryset, view):
         if not request.user.is_authenticated or request.user.position == base_position.get_user_position():
             return queryset.filter(
                 is_active=True, is_hidden=False,
@@ -102,20 +121,37 @@ class ObjectFilter(filters.BaseFilterBackend):
         queryset = queryset.select_related(
             'owner', 'address', 'type', 'independent', 'independent__exact_address', 'address__city',
         ).prefetch_related(
-            Prefetch('rooms', queryset=Room.objects.filter(rooms_filters).distinct().prefetch_related(
-                    Prefetch('price_list', queryset=PriceListOfRoom.objects.filter(price_list_filters))
+            Prefetch(
+                'rooms', queryset=Room.objects.prefetch_related(
+                    Prefetch('price_list', queryset=PriceListOfRoom.objects.filter(price_list_filters)),
                 )
             ),
             Prefetch(
                 'independent__price_list', queryset=IndependentPriceList.objects.filter(price_list_filters)
-            )
+            ),
+            'images',
+            'videos',
+            'rooms__tags',
+            'independent__tags',
         )
-        return self.position_filter(request, annotate_price(annotate_people(queryset), first_day, last_day))
+        return self.position_filter(
+                request,
+                annotate_price(
+                    annotate_people(queryset), first_day, last_day
+                ),
+                view,
+            )
 
     def filter_queryset(self, request, queryset, view):
-        action = view.action
-        if action == 'list':
-            return self.list_filter(request, queryset, view)
+        backend_filters = {
+            'list': self.list_filter,
+            'add_to_favorites': self.position_filter,
+            'add_images_object': self.position_filter,
+            'add_videos_object': self.position_filter,
+            'retrieve': self.list_filter,
+            'delete': self.position_filter,
+        }
+        return backend_filters[view.action](request, queryset, view)
 
 
 class ObjectFilterSet(django_filters.FilterSet):

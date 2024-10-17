@@ -38,6 +38,9 @@ class Object(models.Model):
         'TypeOfObject', verbose_name='Тип', on_delete=models.SET_DEFAULT,
         related_name='objects_of_type', default=0,
     )
+    user_favorites = models.ManyToManyField(
+        'users.User', related_name='favorites_objects'
+    )
 
     class Meta:
         verbose_name = 'Объект'

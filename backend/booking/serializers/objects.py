@@ -1,6 +1,8 @@
+from itertools import chain
 from rest_framework import serializers
 from booking.models.media import ObjectImage, ObjectVideo
 from booking.models.object import Object, IndependentObject, Room
+from booking.serializers.media import ImageObjectListSerializer, VideoObjectListSerializer
 from common.mixins.serializer_mixins import CommonMixin
 from booking.models.address import Address, ExactAddress
 from rest_framework import exceptions
@@ -109,26 +111,12 @@ class ObjectCreateSerializer(ObjectValidate, serializers.ModelSerializer):
         return object_instance
 
 
-class ImageObjectSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ObjectImage
-        fields = (
-            'media',
-        )
-
-
-class VideoObjectSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ObjectVideo
-        fields = (
-            'media',
-        )
-
-
 class ObjectListSerializer(serializers.ModelSerializer):
     address = AddressObjectListSerializer()
     min_price = serializers.DecimalField(max_digits=8, decimal_places=2)
-    images = ImageObjectSerializer(many=True)
+    images = ImageObjectListSerializer(many=True)
+    tags = serializers.SerializerMethodField(method_name='get_tags')
+    videos = VideoObjectListSerializer(many=True)
 
     class Meta:
         fields = (
@@ -138,5 +126,16 @@ class ObjectListSerializer(serializers.ModelSerializer):
             'min_price',
             'type',
             'images',
+            'videos',
+            'tags',
         )
         model = Object
+
+    def get_tags(self, obj):
+        tags = []
+        data = obj.rooms.all() if not obj.type.is_independent else [obj.independent]
+        for i in data:
+            tags.append(i.tags.all())
+        tags = list(set(chain(*tags)))[:7]
+        serializer = TagListSerializer(tags, many=True)
+        return serializer.data
