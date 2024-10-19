@@ -1,4 +1,6 @@
 from django.contrib import admin
+
+from users.models.email_activate import EmailActivate
 from users.models.position import Position
 from users.models.user import User
 from django.contrib.auth.admin import UserAdmin
@@ -31,3 +33,8 @@ class CustomUserAdmin(UserAdmin):
 @admin.register(Position)
 class PositionAdmin(admin.ModelAdmin):
     list_display = ('name',)
+
+
+@admin.register(EmailActivate)
+class EmailActivate(admin.ModelAdmin):
+    list_display = ('id', 'user', 'code')

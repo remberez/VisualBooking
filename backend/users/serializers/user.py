@@ -4,7 +4,10 @@ from rest_framework import serializers
 from rest_framework import exceptions
 import re
 from django.core import exceptions as django_exceptions
+from rest_framework.exceptions import ParseError
+
 from common.mixins.serializer_mixins import CommonMixin
+from users.models.email_activate import EmailActivate
 
 User = get_user_model()
 
@@ -104,3 +107,25 @@ class UserUpdateSerializer(UserValidation, serializers.ModelSerializer):
             'patronymic',
             'image',
         )
+
+
+class ActivateEmailSerializer(serializers.Serializer):
+    code = serializers.CharField(max_length=6)
+
+    def validate(self, attrs):
+        user_code = attrs['code']
+        user = self.context.get('request').user
+        backend_code = EmailActivate.objects.filter(user=user)
+        if backend_code.exists() and user_code == backend_code.first().code:
+            return attrs
+        raise ParseError('Неверный код')
+
+    def create(self, validated_data):
+        user = self.context.get('request').user
+        print(user)
+        backend_code = EmailActivate.objects.filter(user=user)
+        if backend_code.exists():
+            backend_code.delete()
+            user.mail_confirmed = True
+            user.save()
+        return validated_data

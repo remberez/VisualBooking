@@ -33,6 +33,10 @@ class User(AbstractUser):
     )
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['surname', 'name', 'patronymic']
+    mail_confirmed = models.BooleanField(
+        verbose_name='Почта подтверждена',
+        default=False
+    )
 
     objects = CustomUserManager()
 

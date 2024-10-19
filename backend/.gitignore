@@ -186,3 +186,5 @@ fabric.properties
 venv
 /venv/
 ./venv
+
+django.env

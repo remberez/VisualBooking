@@ -5,8 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 root = environ.Path(__file__) - 2
 env = environ.Env()
-environ.Env.read_env(env.str(root(), '.env'))
-
+environ.Env.read_env(env.str(root(), 'django.env'))
 
 SECRET_KEY = env.str('SECRET_KEY')
 
@@ -30,6 +29,7 @@ INSTALLED_APPS += [
     'django_filters',
     'debug_toolbar',
     'corsheaders',
+    'django_celery_results',
 ]
 
 # My apss
@@ -181,3 +181,13 @@ MEDIA_ROOT = 'media'
 MEDIA_URL = 'media/'
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = 'agasianartyom@yandex.ru'
+EMAIL_HOST_PASSWORD = '222333Aa'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+CELERY_BROKER_URL = env.str('CELERY_BROKER_URL')
